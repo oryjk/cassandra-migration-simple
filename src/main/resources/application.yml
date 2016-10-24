@@ -1,0 +1,50 @@
+server:
+  port: 0
+  compression:
+    enabled: true
+
+security:
+  oauth2:
+    resource:
+      jwt:
+        keyValue: ${betalpha.publicKey}
+
+cassandra:
+  version:
+    table: schema_migration
+script:
+  file:
+    path: /app/cassandra/migration
+data:
+  file:
+    path: /app/cassandra/data
+
+---
+
+spring:
+  profiles: UnitTest
+  cloud:
+    config:
+      enabled: false
+      discovery:
+        enabled: false
+
+betalpha:
+  publicKey: dummy
+
+---
+
+spring:
+  profiles: custom
+script:
+  file:
+    path: cassandra/migration
+
+data:
+  file:
+    path: cassandra/data
+
+
+
+
+

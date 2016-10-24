@@ -1,0 +1,21 @@
+- hosts: target
+  remote_user: betalpha
+  vars:
+    repository_name: daocloud.io/betalpha/bar-db-migration
+    image_name: '{{ repository_name }}:{{ version }}'
+    container_name: bar-db-migration
+
+  tasks:
+    - name: stop container
+      command: docker stop {{ container_name }}
+      ignore_errors: yes
+
+    - name: remove container
+      command: docker rm {{ container_name }}
+      ignore_errors: yes
+
+    - name: pull image
+      command: docker pull {{ image_name }}
+
+    - name: run container
+      command: docker run --name {{ container_name }} --net host -v /alidata1/cassandra/export/initial_table:/app/cassandra/data -v ~/projects/bar/log/bar-db-migration:/var/log -v /etc/localtime:/etc/localtime:ro -e spring.profiles.active={{springenv}} -d {{ image_name }}

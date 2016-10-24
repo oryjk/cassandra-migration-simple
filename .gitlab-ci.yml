@@ -1,0 +1,30 @@
+stages:
+  - build
+  - staging
+  - production
+
+job_build:
+  stage: build
+  script:
+    - ansible-playbook -i ./ansible/hosts/ci.yml --extra-vars "version=$CI_BUILD_TAG" ./ansible/build.yml
+  only:
+    - tags
+  except:
+    - triggers
+
+job_staging:
+  stage: staging
+  script:
+    - ansible-playbook -i ./ansible/hosts/staging.yml --extra-vars "version=$CI_BUILD_TAG springenv=test" ./ansible/deploy.yml
+  only:
+    - tags
+  except:
+    - triggers
+  when: on_success
+
+job_production:
+  stage: production
+  script:
+    - ansible-playbook -i ./ansible/hosts/production.yml --extra-vars "version=$CI_BUILD_TAG springenv=prod" ./ansible/deploy.yml
+  only:
+    - triggers

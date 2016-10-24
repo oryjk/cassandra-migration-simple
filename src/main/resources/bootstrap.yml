@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: bar-db-migration
+
+---
+spring:
+  profiles: test
+  cloud:
+    config:
+      uri: ${ConfigUri:http://localhost:8888}
+
+---
+spring:
+  profiles: rancher
+  cloud:
+    config:
+      uri: ${ConfigUri:http://ba-svc-config:8888}

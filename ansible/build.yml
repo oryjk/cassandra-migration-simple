@@ -1,0 +1,26 @@
+- hosts: target
+  remote_user: betalpha
+  vars:
+    repository_name: daocloud.io/betalpha/bar-db-migration
+    image_name: '{{ repository_name }}:{{ version }}'
+    container_name: bar-db-migration
+
+  tasks:
+    - name: pull code
+      command: git pull
+      args:
+        chdir: ~/projects/bar-db-migration
+
+    - name: maven build
+      command: mvn clean install
+      args:
+        chdir: ~/projects/bar-db-migration
+
+    - name: build docker image
+      command: docker build -t {{image_name}} ~/projects/bar-db-migration
+
+    - name: push docker image
+      command: docker push {{image_name}}
+
+    - name: remove docker image
+      command: docker rmi {{image_name}}
